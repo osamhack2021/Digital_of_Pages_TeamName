@@ -1,3 +1,8 @@
 **/node_modules
+/packge-lock.json
+/uploads
+.env
+/assets
+**/build
 
 token.txt

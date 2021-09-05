@@ -18,6 +18,8 @@
 		"nodemon": "^2.0.12"
 	},
 	"scripts": {
+		"start": "node build/server.js",
+		"build": "babel backend --out-dir build",
 		"server": "cd server && nodemon --exec babel-node server.js",
 		"client": "cd client && npm start"
 	},
