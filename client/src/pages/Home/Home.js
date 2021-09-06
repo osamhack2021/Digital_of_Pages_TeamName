@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box } from '@material-ui/core';
 
 const Home = (props) => {
-	
-	return (
-		<Box>Home Main</Box>
-	)
+	const [message, setMessage] = useState();
+
+	useEffect(() => {
+		fetch('/api')
+			.then((res) => res.json())
+			.then((data) => setMessage(data.message));
+	});
+
+	return <Box>Home Main {message}</Box>;
 };
 
 export default Home;

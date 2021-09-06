@@ -20,9 +20,10 @@
 	"scripts": {
 		"start": "node build/server.js",
 		"build": "babel backend --out-dir build",
-		"server": "cd server && nodemon --exec babel-node server.js",
+		"backend": "cd backend && nodemon --exec babel-node server.js",
 		"client": "cd client && npm start"
 	},
 	"author": "Hoon",
-	"license": "ISC"
+	"license": "ISC",
+	"proxy": "https://osam-hackton--server.run.goorm.io/"
 }
