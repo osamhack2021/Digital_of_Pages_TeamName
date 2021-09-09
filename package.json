@@ -1,5 +1,5 @@
 {
-	"name": "api",
+	"name": "server",
 	"version": "1.0.0",
 	"description": "server of osam_hackton_2021",
 	"main": "server.js",
@@ -8,7 +8,11 @@
 		"npm": "6.11.3"
 	},
 	"dependencies": {
-		"express": "^4.17.1"
+		"bcryptjs": "^2.4.3",
+		"body-parser": "^1.19.0",
+		"express": "^4.17.1",
+		"jsonwebtoken": "^8.5.1",
+		"mongoose": "^6.0.5"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.15.4",
