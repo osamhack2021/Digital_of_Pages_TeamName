@@ -1,6 +1,4 @@
 **/node_modules
 /packge-lock.json
-/uploads
-.env
-/assets
+**/.env
 **/build
