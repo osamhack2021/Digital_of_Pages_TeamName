@@ -1,32 +1,37 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
-import Layout from './hoc/Layout/Layout';
-import Auth from './pages/Auth/Auth';
-import Bulletin from './pages/Bulletin/Bulletin';
-import Detail from './pages/Detail/Detail';
-import Home from './pages/Home/Home';
-import User from './pages/User/User';
-import NotFound from './pages/404/404';
+// import Layout from './hoc/Layout/Layout';
+import Signin from './pages/Signin';
+import Signup from './pages/Signup';
+import Bulletin from './pages/Bulletin';
+import Detail from './pages/Detail';
+import Home from './pages/Home';
+import User from './pages/User';
+import NotFound from './pages/404';
+import Header from './components/Header/Header';
+import Footer from './components/Footer/Footer';
 
 const App = (props) => {
 	const routes = (
 		<Switch>
-			<Route path="/" exact component={Home} />
-			<Route path="/auth" component={Auth} />
-			<Route path="/bulletin" component={Bulletin} />
-			<Route path="/detail" component={Detail} />
-			<Route path="/user" component={User} />
-			<Route path="/404" component={NotFound} />
-			<Redirect to='/404' />
+			<Route path="/Signin" component={Signin} />
+			<Route path="/Signup" component={Signup} />
+			<>
+				<Header />
+				<Route path="/" exact component={Home} />
+				<Route path="/bulletin" component={Bulletin} />
+				<Route path="/detail" component={Detail} />
+				<Route path="/user" component={User} />
+				<Route path="/404" component={NotFound} />
+				<Footer />
+			</>
 		</Switch>
 	);
 
 	return (
-		<Layout>
-			<Router>
-				<Suspense fallback={<div>Loading...</div>}>{routes}</Suspense>
-			</Router>
-		</Layout>
+		<Router>
+			<Suspense fallback={<div>Loading...</div>}>{routes}</Suspense>
+		</Router>
 	);
 };
 export default App;

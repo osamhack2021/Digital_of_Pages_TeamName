@@ -1,6 +1,6 @@
 const API_URL = '/api/auth/';
 
-const register = (username, email, password) => {
+const signup = (username, email, password) => {
 	return fetch.post(API_URL + 'signup', {
 		username,
 		email,
@@ -8,21 +8,21 @@ const register = (username, email, password) => {
 	});
 };
 
-const login = (username, password) => {
+const signin = (username, password) => {
 	return fetch
 		.post(API_URL + 'signin', {
 			username,
 			password,
 		})
-		.then((response) => {
-			if (response.data.accessToken) {
-				localStorage.setItem('user', JSON.stringify(response.data));
+		.then((res) => {
+			if (res.data.accessToken) {
+				localStorage.setItem('user', JSON.stringify(res.data));
 			}
-			return response.data;
+			return res.data;
 		});
 };
 
-const logout = () => {
+const signout = () => {
 	localStorage.removeItem('user');
 };
 
@@ -31,8 +31,8 @@ const getCurrentUser = () => {
 };
 
 export default {
-	register,
-	login,
-	logout,
+	signup,
+	signin,
+	signout,
 	getCurrentUser,
 };
