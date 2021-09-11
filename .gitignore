@@ -4,5 +4,3 @@
 .env
 /assets
 **/build
-
-token.txt
