@@ -10,12 +10,15 @@ import User from './pages/User';
 import NotFound from './pages/404';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
+import AuthLayout from './hoc/AuthLayout';
 
 const App = (props) => {
 	const routes = (
 		<Switch>
-			<Route path="/Signin" component={Signin} />
-			<Route path="/Signup" component={Signup} />
+			<AuthLayout>
+				<Route path="/Signin" component={Signin} />
+				<Route path="/Signup" component={Signup} />
+			</AuthLayout>
 			<>
 				<Header />
 				<Route path="/" exact component={Home} />

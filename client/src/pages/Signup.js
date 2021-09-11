@@ -16,6 +16,7 @@ import {
 	TextField,
 	Button,
 	Link,
+	Paper,
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Alert from '@material-ui/lab/Alert';
@@ -40,45 +41,33 @@ const validationSchema = yup.object({
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		display: 'flex',
+		height: '100vh',
+	},
+	image: {
+		backgroundImage: 'url(https://source.unsplash.com/random)',
+		backgroundSize: 'cover',
 	},
 	paper: {
-		padding: theme.spacing(1),
-		textAlign: 'center',
-		color: theme.palette.text.secondary,
-	},
-	menuButton: {
-		marginRight: 36,
-	},
-	hide: {
-		display: 'none',
-	},
-	drawerClose: {
-		transition: theme.transitions.create('width', {
-			easing: theme.transitions.easing.sharp,
-			duration: theme.transitions.duration.leavingScreen,
-		}),
-		overflowX: 'hidden',
-		width: 0 /*theme.spacing(7) + 1*/,
-		[theme.breakpoints.up('sm')]: {
-			width: theme.spacing(9) + 1,
-		},
-	},
-	toolbar: {
+		margin: theme.spacing(8, 4),
 		display: 'flex',
+		flexDirection: 'column',
 		alignItems: 'center',
-		justifyContent: 'flex-end',
-		padding: theme.spacing(0, 1),
-		// necessary for content to be below app bar
-		...theme.mixins.toolbar,
 	},
-	content: {
-		flexGrow: 1,
-		padding: theme.spacing(3),
+	avatar: {
+		margin: theme.spacing(1),
+		backgroundColor: theme.palette.secondary.main,
+	},
+	form: {
+		width: '100%',
+		marginTop: theme.spacing(1),
+	},
+	submit: {
+		margin: theme.spacing(3, 0, 2),
 	},
 }));
 
 const Signup = (props) => {
+	const classes = useStyles();
 	const [message, setMessage] = useState('');
 	const [isSuccess, setIsSuccess] = useState(false);
 	const formik = useFormik({
@@ -109,9 +98,14 @@ const Signup = (props) => {
 	});
 
 	return (
-		<div>
-			<form onSubmit={formik.handleSubmit}>
+		<>
+			<Typography component="h1" variant="h5">
+				Sign Up
+			</Typography>
+			<form className={classes.form} onSubmit={formik.handleSubmit}>
 				<TextField
+					variant="outlined"
+					margin="normal"
 					fullWidth
 					id="email"
 					name="email"
@@ -122,6 +116,8 @@ const Signup = (props) => {
 					helperText={formik.touched.email && formik.errors.email}
 				/>
 				<TextField
+					variant="outlined"
+					margin="normal"
 					fullWidth
 					id="username"
 					name="username"
@@ -132,6 +128,8 @@ const Signup = (props) => {
 					helperText={formik.touched.username && formik.errors.username}
 				/>
 				<TextField
+					variant="outlined"
+					margin="normal"
 					fullWidth
 					id="password"
 					name="password"
@@ -142,12 +140,33 @@ const Signup = (props) => {
 					error={formik.touched.password && Boolean(formik.errors.password)}
 					helperText={formik.touched.password && formik.errors.password}
 				/>
-				{message && <Alert severity="error">{message}</Alert>}
-				<Button color="primary" variant="contained" fullWidth type="submit">
-					Submit
+				<TextField
+					variant="outlined"
+					margin="normal"
+					fullWidth
+					id="checkPassword"
+					name="checkPassword"
+					label="Type your password again"
+					type="password"
+					value={formik.values.password}
+					onChange={formik.handleChange}
+					error={formik.touched.password && Boolean(formik.errors.password)}
+					helperText={formik.touched.password && formik.errors.password}
+				/>
+				<Button
+					type="submit"
+					fullWidth
+					variant="contained"
+					color="primary"
+					className={classes.submit}
+				>
+					Sign Up
 				</Button>
 			</form>
-		</div>
+			<Button fullWidth color="primary" className={classes.submit}>
+				Sign In
+			</Button>
+		</>
 	);
 };
 
