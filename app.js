@@ -191,7 +191,7 @@ process.on('uncaughtException', function (err) {
 	console.log(err.stack);
 });
 
-프로세스 종료 시에 데이터베이스 연결 해제
+
 process.on('SIGTERM', function () {
     console.log("프로세스가 종료됩니다.");
     app.close();
