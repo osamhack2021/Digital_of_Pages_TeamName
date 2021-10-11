@@ -62,10 +62,7 @@ app.use(cookieParser());
 
 // 세션 설정
 
-if(process.env.NODE_ENV==='production'){
-	app.use(helmet());
-	app.use(hpp());
-}
+
 
 // cookie-parser 설정
 app.use(cookieParser(process.env.COOKIE_SECRET));
