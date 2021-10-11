@@ -13,7 +13,9 @@ var expressErrorHandler = require('express-error-handler');
 
 // Session 미들웨어 불러오기
 var expressSession = require('express-session');
-  
+ 
+const redis = require('redis');
+const RedisStore=require('connect-redis')(expressSession);
 
 //===== Passport 사용 =====//
 var passport = require('passport');
@@ -27,7 +29,7 @@ var database = require('./database/database');
 
 // 모듈로 분리한 라우팅 파일 불러오기
 var route_loader = require('./routes/route_loader');
-
+var cors=require('cors');
 // 익스프레스 객체 생성
 var app = express();
 
@@ -40,7 +42,7 @@ console.log('뷰 엔진이 ejs로 설정되었습니다.');
 
 //===== 서버 변수 설정 및 static으로 public 폴더 설정  =====//
 console.log('config.server_port : %d', config.server_port);
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 80);
  
 
 
@@ -58,11 +60,38 @@ app.use('/public', static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 
 // 세션 설정
-app.use(expressSession({
-	secret:'my key',
-	resave:true,
-	saveUninitialized:true
-}));
+
+if(process.env.NODE_ENV==='production'){
+	app.use(helmet());
+	app.use(hpp());
+}
+
+// cookie-parser 설정
+app.use(cookieParser(process.env.COOKIE_SECRET));
+//const client = redis.createClient({ host: process.env.REDIS_HOST, port: process.env.REDIS_PORT, password: process.env.REDIS_PASSWORD, logError: true });
+var client = redis.createClient();
+app.use(expressSession(
+    {
+        secret: 'secret_key',
+        store: new RedisStore({
+            host: "http://20.194.38.172",
+            port: 6379,
+            client: client,
+            prefix : "session:",
+            db : 0
+        }),
+        saveUninitialized: false, // don't create session until something stored,
+        resave: true // don't save session if unmodified
+    }
+));
+
+// app.use(expressSession({
+// 	secret:'my key',
+// 	resave:true,
+// 	saveUninitialized:true
+// }));
+
+app.use(cors());
 
 //===== Passport 사용 설정 =====//
 // Passport의 세션을 사용할 때는 그 전에 Express의 세션을 사용하는 코드가 있어야 함
@@ -74,8 +103,8 @@ app.use(flash());
 //라우팅 정보를 읽어들여 라우팅 설정
 
 app.use('/book', function (req, res, next) {
-  // console.log('Request Type:', req.method);
-  // console.log('로그인(book) :', req.isAuthenticated());
+  console.log('Request Type:', req.method);
+	  console.log('로그인(book) :', req.isAuthenticated());
 	if(!req.isAuthenticated()){
 		// res.redirect('/login');
 			res.render('login.ejs', { message:'로그인 상태가 아닙니다. 로그인을 진행해 주세요.' });
@@ -85,7 +114,8 @@ app.use('/book', function (req, res, next) {
   
 });
 app.use('/user', function (req, res, next) {
-  
+  console.log('Request Type:', req.method);
+	  console.log('로그인 :', req.isAuthenticated());
 	if(!req.isAuthenticated()){
 		// res.redirect('/login');
 			res.render('login.ejs', { message: '로그인 상태가 아닙니다. 로그인을 진행해 주세요.' });
@@ -95,7 +125,8 @@ app.use('/user', function (req, res, next) {
   
 });
 app.use('/post', function (req, res, next) {
-
+  console.log('Request Type:', req.method);
+	  console.log('로그인 :', req.isAuthenticated());
 	if(!req.isAuthenticated()){
 		// res.redirect('/login');
 			res.render('login.ejs', { message: '로그인 상태가 아닙니다. 로그인을 진행해 주세요.' });
@@ -107,7 +138,17 @@ app.use('/post', function (req, res, next) {
 });
 var router = express.Router();
 route_loader.init(app, router);
+router.get('/session/set/:value', function(req, res) {
+    req.session.redSession = req.params.value;
+    res.send('session written in Redis successfully');
+});
 
+app.get('/session/get/', function(req, res) {
+    if(req.session.redSession)
+        res.send('the session value stored in Redis is: ' + req.session.redSess);
+    else
+        res.send("no session value stored in Redis ");
+});
 // 패스포트 설정
 var configPassport = require('./config/passport');
 configPassport(app, passport);
@@ -141,32 +182,6 @@ app.use((err, req, res, next) => { // 에러 처리 부분
 
 //===== 서버 시작 =====//
 
-// var moment = require('moment'); 
-// require('moment-timezone'); 
-// moment.tz.setDefault("Asia/Seoul"); 
-// var date = moment().format('YYYY-MM-DD HH:mm:ss');
-// console.log(date);
-
-// var cron = require('node-cron');
-
-// var term= parseInt(returndate-date / 86400000);
-// console.log(term);
-
-// cron.schedule('* * 2 * * *', () => {
-	
-// 	var database = req.app.get('database');
-
-// 	if(req.isAuthenticated()){
-
-// 		if (database.db) {
-// 			database.ReservationModel.loadAll(function(err, results) {
-
-// 			});
-// 		}	
-// 	}
-	
-// });
-
 
 //확인되지 않은 예외 처리 - 서버 프로세스 종료하지 않고 유지함
 process.on('uncaughtException', function (err) {
@@ -176,7 +191,7 @@ process.on('uncaughtException', function (err) {
 	console.log(err.stack);
 });
 
-// 프로세스 종료 시에 데이터베이스 연결 해제
+프로세스 종료 시에 데이터베이스 연결 해제
 process.on('SIGTERM', function () {
     console.log("프로세스가 종료됩니다.");
     app.close();
@@ -197,3 +212,4 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 	database.init(app, config);
    
 });
+
